@@ -2,6 +2,7 @@
 /*
 !.gitignore
 !.vimrc
+!.setup.sh
 !notes/
 !notes/*
 !notes/*/*
