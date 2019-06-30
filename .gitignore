@@ -1,0 +1,9 @@
+*
+/*
+!.gitignore
+!.vimrc
+!notes/
+!notes/*
+!notes/*/*
+!notes/*/*/*
+!notes/*/*/*/*

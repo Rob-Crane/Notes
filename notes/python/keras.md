@@ -1,0 +1,3 @@
+# Keras Notes
+
+## Model Compilation
