@@ -245,7 +245,9 @@ Old method is C `printf` inspired style. See [docs](https://docs.python.org/3/li
 "Object: %s" % obj  # use obj.__str__()
 "Object: %r" % obj # use obj.__repr()
 ```
-More modern method is to use "formatted string literals" or the string `format` member function.  Format specification syntax is similar except '%' is replace with ':' and the expression is surrounded by curly braces.  The syntax follows: `{[field name] [!conversion] [:format string]`.
+More modern method is to use "formatted string literals" or the string `format` member function.  Format specification syntax is similar except '%' is replace with ':' and the expression is surrounded by curly braces.  The syntax follows:
+
+`{[field name] [!conversion] [:format string]}`.
 
 ##### Conversion Field
 The conversion field describes which class function is used to convert the object to a string:
