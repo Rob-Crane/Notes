@@ -245,7 +245,7 @@ Old method is C `printf` inspired style. See [docs](https://docs.python.org/3/li
 "Object: %s" % obj  # use obj.__str__()
 "Object: %r" % obj # use obj.__repr()
 ```
-More modern method is to use "formatted string literals" or the string `format` member function.  Format specification syntax is similar except '%' is replace with ':' and the expression is surrounded by curly braces.  The new syntax also adds more functionality:
+More modern method is to use "formatted string literals" or the string `format` member function.  Format specification syntax is similar except '%' is replace with ':' and the expression is surrounded by curly braces.  The syntax follows: `{[field name] [!conversion] [:format string]`.
 
 ##### Conversion Field
 The conversion field describes which class function is used to convert the object to a string:
@@ -256,54 +256,24 @@ The conversion field describes which class function is used to convert the objec
 val = get_foo()
 f"The value is {val!r}" # "The value is " + val.__repr__()
 ```
-
-##### Alignment and Fill
-Fill character (default space) followed by alignment character controls alignment.  Only meaningful if minimum width set.
-```python
-star = "*"
-f"Begin-->{star:=^21}<--End" # '*' centered in equal sign fill characters
-f"Begin-->{star:$<21}<--End" # '*' left aligned '*' with 20 more '$' fill characters
-f"Begin-->{star:=^21}<--End" # '*' centered in equal sign fill characters
-```
-A fill character of `=` cause padding to occur on the _left_ of the sign of numeric types.
-
-##### Sign, Decimal, and Zero-padding
-`sign` controls what goes in front of positive numbers (negative values always have '-'):
-    * `+` prepends '+' for positive numbers
-    * `-` prepends nothing for postive numbers (default)
-    * ' ' prepends ' ' for positive numbers
-A `#` afterwards causes "alternate form" for the type being printed:
-    * For binary, octal, and hexidecimal integer types, prepend `0b`, `0o`, `0x`
-    * For floating types, always append with `.`, even if value has no floating point values.
-A `0` afterwards is equivalent to `=` alignment with a `0` fill character.
+##### Format String
+The format string, following the `:`, is complicated and is fully described [here](https://docs.python.org/3/library/string.html#format-specification-mini-language).  A quick summary:
+* `fill` (any char) controls what character is used to fill extra space if a minimum width is specified.
+* `align` (<, ^, >, =) controls justification, the last value used for padding after sign for numeric types.
+* `sign` (+, -, ' ') controls positive or negative sign for numeric types.
+* `#` controls `0b`, `0o, `0x` printing for binary, octal, hexidecimal numbers.
+* `0` enables "sign aware zero padding".  Equivalent to '0' for padding with `=` alignment.
+* `width` is minimum field width.
+* `grouping options` (',' or '\_') groups decimal values into thousandths with that character.
+* `precision` (first number following `.`) How many digits displayed after decimal.
+* `type` ('b', 'c', 'd', 'o', ...) Display number as binary, char, decimal, octal, etc.
 ```python
 "My weight change has been: {:+05.1f}".format(change) # ...has been +02.1
 "My age in binary: {:+#b}".format(29) # ...binary: +0b11100
+f"value: {math.pi:05.2f} # "value: 003.14"
+f"value: {math.pi:05.2g} # "value: 0003.1"
+f"value: {math.pi:5.2g} # "value:     3.1"
 ```
-
-##### Width, Comma Separator, Precision
-Following minimum width, a `,` adds a comma every thousandth place.  
-```python
-f"value: {100000000:,d}" # "value: 100,000,000
-```
-The precision value depends on the format type:
-* For non-numeric types, the precision value is maximum number of characters taken from the source
-* For `g` type formats, it is the number of digits to display.
-* For `f` type formats, the precision is the number of digits to display after the decimal place
-    ```python
-    f"value: {math.pi:05.2f} # "value: 003.14"
-    f"value: {math.pi:05.2g} # "value: 0003.1"
-    f"value: {math.pi:5.2g} # "value:     3.1"
-    ```
-
-##### Format types
-Type specifiers control how the data is displayed (modifiable by options described)
-* `s` - display value as a string.
-* `b`, `o`, `d`, `x` - integer type in binary, octal, decimal, or hextal format
-* `c` - integer type as ascii character
-* `e`, `f`, `g` - float types as exponent, fixed-point, "general" format
-* `%` - percentage format
-[See docs for more formats.](https://docs.python.org/3.4/library/string.html#formatspec)
 
 #### Formatted String Literals and `format`
 
