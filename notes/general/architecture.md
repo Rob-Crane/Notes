@@ -70,3 +70,23 @@ js error ; jump if SF == 1
     * `vaddpd %ymm0, %ymm1, %ymm2`: Vector add "packed" doubles in YMM0 and YMM1, store in YMM2.  "V" prefix denotes AVX instructions.
   * YMM registers are 256 bit.  XMM are 128 bit and alias lower order bits of YMM registers.
   * SIMD instruction operands can also be memory addresses but some instructions require certain alignment.
+### Calling Conventions
+* From 10,000 feet, to call a function, a "caller" needs to know where to put arguments and where to access any return value.  The "callee" needs to know where to access arguments and where to put values to return.  The function being called may be a system call.  These expectations are standardized as "calling conventions".
+* Calling conventions also include requirements to preserve register values, type representation, and name mangling (convention for symbol names required by linker) together form the Application Binary Interface (ABI) specified by operating systems.
+* Stack conventionally grows "downwards" so decrementing SP "grows" the stack.
+  * **Example:** `pushq %rbp` Decrements RSP (stack pointer) by 8 and writes contents of RBP to location pointed to by RSP.
+* Procedure call begins with `call [label]` which, after incrementing instruction pointer (IP), pushes it on the stack.  IP then populated with instruction address of label.  When procedure call ends, stack is returned to this condition.  `return` inverts this process by popping instruction address off stack and jumping to it.
+* Some x86-64 ABI rules ([source](https://cs61.seas.harvard.edu/site/2018/Asm1/)):
+  * Caller stores first six arguments in registers  %rdi, %rsi, %rdx, %rcx, %r8, and %r9 if possible.  Otherwise on stack.
+  * Return value is stored in %rax if it fits.  Otherwise, caller reserves space on stack and passes address as first argument to callee.
+* The base pointer RBP (or frame pointer) provides a fixed reference to the stack frame of the currently executing function.  This is populated at the beginning of a procedure as follows:
+```asm
+	pushq	%rbp       ; Push caller's base pointer onto stack to preserve it.
+                  ; Stack pointer now points at preserved RBP
+                  
+	movq	%rsp, %rbp  ; Populate RBP with current stack pointer.
+                  ; Since (%rbp) is the caller's frame pointer, can trace
+                  ; up call stack by following chain of frame pointers
+                  ; saved on stack.
+```
+([illustration](https://cs61.seas.harvard.edu/site/img/stack-2018-03.png))
