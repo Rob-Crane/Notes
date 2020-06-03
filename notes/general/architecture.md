@@ -94,3 +94,12 @@ js error ; jump if SF == 1
                   ; saved on stack.
 ```
 ([illustration](https://cs61.seas.harvard.edu/site/img/stack-2018-03.png))
+
+## Interrupts (x86)
+Normal program control flow consists of jumps and procedure calls.  Interrupts provide an additional mechanism and can be triggered within the program executing with the `int` opcode or externally on an IRQ line (typically from a Programmable Interrupt Controller (PIC) which contains additional logic for multiplexing/queueing interrupts).
+
+When an interrupt is executed it is executed with a number which identifies the interrupt.  In protected mode, the interrupt indexes into an Interrupt Descriptor Table (IDT) - similar to Global Descriptor Table for segmented memory management - which contains address of handler procedure.  In real mode at boot time, the IDT doesn't exist (since it's created by the OS kernel).  Interrupts instead index into a simpler Interrupt Vector Table (IVT) loaded by BIOS.  These interrupt handlers are defined by the BIOS manufacturer and can be used like "system calls" to BIOS.  These BIOS interrupts do not conform with Intel's specification for interrupt numbering ([source](https://stackoverflow.com/questions/62122049/how-are-bios-interrupts-deconflicted-with-reserved-hardware-interrupts).
+
+Actually using interrupts is a way of making system calls from normal programs but more recent processors have opcodes ([SYSENTER/SYSEXIT](https://cs.stackexchange.com/questions/38141/why-system-calls-via-interrupts-are-slow-and-thus-we-have-sysenter-sysexit-instr)) which make system calls more efficiently with lower overheads than interrupt handling.
+
+Interrupts are used asynchronously by external hardware to signal the processor to handle an event (like a keystroke) and synchronously for things like system calls and error signalling. (divide by zero, etc.)
