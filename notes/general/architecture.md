@@ -1,7 +1,11 @@
 # Architecture
 
-## x86 Assembly
+## Booting
+1. At reset, CPU loads first instruction from hard-coded address, the "reset vector".  The motherboard directs this special memory address to wherever it stores its firmware (instead of the memory bus) to load BIOS (old) or UEFI (new).
+1. BIOS/UEFI first executes Power On Self Test (POST) and then searches through (possibly configurable) list of storage devices.  At each storage device, BIOS/UEFI loads a fixed size portion at the beginning of storage device, the Master Boot Record (MBR, old) or GUID Partion Table (GPT, new).
+1. The instructions contained in this record describe the partioning of the desk but also flag if the device is bootable.  If so, it will also intructions for loading the operating system kernel.  The instructions can either directly load the kernel (if it's relatively small) or it can contain instructions to load a more complicated, larger second-stage bootloader like GRUB.
 
+## x86 Assembly
 * `-S` option to clang/gcc causes output to be assembly (stopping after compilation and before assembly).  Can pass assembly file as input to run remaining stages of pipeline (assembly, linking).
 * `objdump -S` will diassemble object code.
 ### Segmentation
