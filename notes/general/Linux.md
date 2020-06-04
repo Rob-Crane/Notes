@@ -75,3 +75,10 @@ get -r remoteDirectory
   ```
 #### References
 * https://superuser.com/questions/134901/whats-the-difference-between-scp-and-sftp
+
+## Process API
+
+* `fork()` copies the current process and begins executing child process immedately after fork point.
+  * Copies parent process' memory, register state, and additional process "metadata".  `fork()` will return 0 in the child process and the child PID in the parent process.
+* `wait()` called in the parent will block until a child process terminates (in the case of more than one child process, any exiting process resumes parent execution)
+* `exec()` "transforms" one process into another, replacing the execution of one process completely into the execution of a new one at it's starting point.
