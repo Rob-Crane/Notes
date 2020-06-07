@@ -103,3 +103,10 @@ When an interrupt is executed it is executed with a number which identifies the 
 Actually using interrupts is a way of making system calls from normal programs but more recent processors have opcodes ([SYSENTER/SYSEXIT](https://cs.stackexchange.com/questions/38141/why-system-calls-via-interrupts-are-slow-and-thus-we-have-sysenter-sysexit-instr)) which make system calls more efficiently with lower overheads than interrupt handling.
 
 Interrupts are used asynchronously by external hardware to signal the processor to handle an event (like a keystroke) and synchronously for things like system calls and error signalling. (divide by zero, etc.)
+
+### Context Switching
+A special class of interrupt is a *timer interrupt* which is used to support context switching between processes.  It originates from a hardware timer - historically a Programmable Interval Timer (PIT), more recently, High Precision Event Timer (HPET).  A timer interrupt serves only as a signal to pause the currently executing process.  The interrupt handler executes the OS's process scheduler which will decide the next process to execute.  If a different process is selected, the OS will execute a context switch.
+
+The [Task State Segment](https://en.wikipedia.org/wiki/Task_state_segment) (TSS) is a data structure which holds information about the currently executing thread.  The task register (TR) indexes into the Global Descriptor Table (GDT) for the segment descriptor which points to the current task's TSS.  Among other things, the TSS holds a pointer to the thread's "kernel stack"  which resides in kernel space for privileged routines like system calls and fault handlers.
+
+In the context of a context switch, the thread's state (registers, stack pointer, etc.) are pushed onto its kernel stack.  The OS then moves to the new thread's TSS and restores the CPU with state from its stack.  When the return-from-trap is executed, the new thread is now running.
